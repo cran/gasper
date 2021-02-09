@@ -3,7 +3,8 @@
 #' Convert a symmetric sparse matrix sA stored as upper triangular matrix to full matrix A.
 #'
 #' @export fullup
-#' @param sA Sparse upper triangular matrix matrix to convert.
+#' @importFrom methods is
+#' @param sA Sparse upper triangular matrix to convert.
 #' @examples
 #' graphname <- "grid1"
 #' groupname <- "AG-Monien"
@@ -11,6 +12,10 @@
 #' A <- fullup(grid1$sA)
 
 fullup <- function(sA) {
-  A <- full(rbind(sA,cbind(sA[,2],sA[,1],sA[,3])))
+  if(is(sA, 'sparseMatrix')){
+    A <- as.matrix(sA)
+  } else {
+    A <- full(rbind(sA,cbind(sA[,2],sA[,1],sA[,3])))
+  }
   return(A)
 }

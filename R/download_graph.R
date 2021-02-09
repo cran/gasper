@@ -4,15 +4,18 @@
 #' they are automatically downloaded and added to the output. See \url{https://sparse.tamu.edu/} for the list of groups and graph names.
 #'
 #' @export download_graph
-#' @import utils
+#' @importFrom utils download.file untar read.table
+#' @importFrom Matrix readMM
 #' @param graphname Name of the graph to download.
 #' @param groupname Name of the group that provides the graph.
-#' @return \code{graphname} a list of dataframe contening W and xy coordinates.
+#' @return \code{graphname} a list contening the sparse matrix \code{sA}, \code{xy} coordinates (if any), \code{dim} the number of rows, columns and numerically nonzero elements  and \code{info}, the path to a plain txt file containing information associated with \code{sA} (accessible for example via \code{file.show(graphname$info)}).
+#' @references
+#' Davis, T. A., & Hu, Y. (2011). The University of Florida sparse matrix collection. ACM Transactions on Mathematical Software (TOMS), 38(1), 1-25.
 #' @examples
 #' graphname <- "grid1"
 #' groupname <- "AG-Monien"
 #' download_graph(graphname,groupname)
-#' plot_graph(grid1)
+#' file.show(grid1$info)
 
 download_graph <- function(graphname, groupname) {
     url <- paste("https://sparse.tamu.edu/MM/",
@@ -38,14 +41,42 @@ download_graph <- function(graphname, groupname) {
 
     tmp <- readLines(temppath)
     nskip <- length(grep("%",tmp))+1
-    df <- read.table(temppath,
-                     comment.char = "%",
-                     skip = nskip)
-    if (ncol(df)==2){
-      df$V3 <- rep(1, nrow(df))
+
+    #store graph descrition in tmp folder
+    graphdesc <- paste(tempp,
+                        graphname,sep="")
+
+    # df <- read.table(temppath,
+    #                  comment.char = "%",
+    #                  skip = nskip)
+    gdim <- scan(temppath,
+                 skip = nskip-1,
+                 nmax = 3,
+                 quiet = TRUE)
+    NumRows <- gdim[1]
+    NumCols <- gdim[2]
+    NonZeros <- gdim[3]
+    graphdim <- data.frame(NumRows,
+                           NumCols,
+                           NonZeros)
+
+    m <- readMM(temppath)
+    m <- as(m, "CsparseMatrix")
+    if(nrow(m)==ncol(m)){
+      m <- as(m, "dsCMatrix")
+    } else{
+      m <- as(m, "dgCMatrix")
     }
 
-    if (length(list.files(tempp)!=1)) {
+    # if (ncol(df)==2){
+    #   df$V3 <- rep(1, nrow(df))
+    # }
+
+    #if (length(list.files(tempp))!=1) {
+    if (length(list.files(path=tempp,
+                          pattern = "_coord.mtx"))==1) {
+      writeLines(tmp[1:(nskip)],
+                 graphdesc)
       temppathc <- paste(tempp,
                          graphname,"_coord.mtx",sep="")
 
@@ -63,11 +94,20 @@ download_graph <- function(graphname, groupname) {
       {
         colnames(dfc) <- c("x", "y")
       }
-      return(assign(graphname,list("sA"=df,"xy"=dfc),
+      return(assign(graphname,
+                    list("sA"=m,
+                         "xy"=dfc,
+                         "dim"=graphdim,
+                         "info"=graphdesc),
                     envir = parent.frame()))
     }
     else {
-      return(assign(graphname,list("sA"=df),
+      writeLines(tmp[1:(nskip)],
+                 graphdesc)
+      return(assign(graphname,
+                    list("sA"=m,
+                         "dim"=graphdim,
+                         "info"=graphdesc),
                     envir = parent.frame()))
     }
 
