@@ -13,9 +13,9 @@ knitr::opts_chunk$set(
 )
 
 ## -----------------------------------------------------------------------------
-graphname <- "grid1"
+matrixname <- "grid1"
 groupname <- "AG-Monien"
-download_graph(graphname, groupname)
+download_graph(matrixname, groupname)
 attributes(grid1)
 
 ## -----------------------------------------------------------------------------
@@ -65,36 +65,68 @@ plot_signal(grid1, tilde_f, size = 2)
 wcn <- analysis(tilde_f,tf)
 wcf <- analysis(f,tf)
 
-## -----------------------------------------------------------------------------
-# wcf <- forward_sgwt(f, evalues, evectors, b=b)
+## ---- eval=FALSE--------------------------------------------------------------
+#  wcf <- forward_sgwt(f, evalues, evectors, b=b)
 
 ## -----------------------------------------------------------------------------
 diagWWt <- colSums(t(tf)^2)
 thresh <- sort(abs(wcn))
-opt_thresh <- SURE_MSEthresh(wcn, 
+opt_thresh_d <- SURE_MSEthresh(wcn, 
                            wcf, 
                            thresh, 
                            diagWWt, 
                            b=2, 
                            sigma, 
                            NA,
-                           policy = "dependent")
+                           policy = "dependent",
+                           keepwc = TRUE)
+
+opt_thresh_u <- SURE_MSEthresh(wcn, 
+                           wcf, 
+                           thresh, 
+                           diagWWt, 
+                           b=2, 
+                           sigma, 
+                           NA,
+                           policy = "uniform",
+                           keepwc = TRUE)
+
+## ---- fig.width=5, fig.height=4-----------------------------------------------
+plot(thresh, opt_thresh_u$res$MSE,
+     type="l", xlab = "t", ylab = "risk", log="x")
+lines(thresh, opt_thresh_u$res$SURE-n*sigma^2, col="red")
+lines(thresh, opt_thresh_d$res$MSE, lty=2)
+lines(thresh, opt_thresh_d$res$SURE-n*sigma^2, col="red", lty=2)
+legend("topleft", legend=c("MSE_u", "SURE_u",
+                           "MSE_d", "SURE_d"),
+       col=rep(c("black", "red"), 2), 
+       lty=c(1,1,2,2), cex = 1)
 
 ## -----------------------------------------------------------------------------
-plot(thresh, opt_thresh$res$MSE,
-     type="l", xlab = "t", ylab = "risk")
-lines(thresh, opt_thresh$res$SURE-n*sigma^2, col="red")
-legend("topleft", legend=c("MSE", "SURE"),
-       col=c("black", "red"),lty=1)
+wc_oracle_u <- opt_thresh_u$wc[, opt_thresh_u$min[1]]
+wc_oracle_d <- opt_thresh_d$wc[, opt_thresh_d$min[1]]
+wc_SURE_u <- opt_thresh_u$wc[, opt_thresh_u$min[2]]
+wc_SURE_d <- opt_thresh_d$wc[, opt_thresh_d$min[2]]
 
-## -----------------------------------------------------------------------------
-hatf_oracle <- synthesis(opt_thresh$wc[,opt_thresh$min[1]], tf)
-hatf_SURE  <- synthesis(opt_thresh$wc[,opt_thresh$min[2]], tf)
+hatf_oracle_u <- synthesis(wc_oracle_u, tf)
+hatf_oracle_d <- synthesis(wc_oracle_d, tf)
+hatf_SURE_u  <- synthesis(wc_SURE_u, tf)
+hatf_SURE_d  <- synthesis(wc_SURE_d, tf)
 
-SNR(f,tilde_f)
-SNR(f,hatf_oracle)
-SNR(f,hatf_SURE)
+res <- data.frame("Input_SNR"=round(SNR(f,tilde_f),2),
+                  "MSE_u"=round(SNR(f,hatf_oracle_u),2),
+                  "SURE_u"=round(SNR(f,hatf_SURE_u),2),
+                  "MSE_d"=round(SNR(f,hatf_oracle_d),2),
+                  "SURE_d"=round(SNR(f,hatf_SURE_d),2))
 
-## -----------------------------------------------------------------------------
-#hatf_oracle <- inverse_sgwt(opt_thresh$wc[,opt_thresh$min[1]], evalues, evectors, b)
+## ---- echo=F------------------------------------------------------------------
+knitr::kable(res, caption="Uniform vs Dependent" )
+
+## ---- eval=FALSE--------------------------------------------------------------
+#  hatf_oracle_u <- inverse_sgwt(wc_oracle_u,
+#                                evalues, evectors, b)
+
+## ---- eval=FALSE--------------------------------------------------------------
+#  wc_oracle_u <- betathresh(wcn,
+#                            thresh[opt_thresh_u$min[[1]]], 2)
 

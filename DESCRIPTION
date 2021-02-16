@@ -1,7 +1,7 @@
 Package: gasper
 Type: Package
 Title: Graph Signal Processing
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(person("Fabien", "Navarro", role = c("aut", "cre"), 
                     email = "fabien.navarro@math.cnrs.fr"), 
              person("Basile", "De Loynes", role = "aut", 
@@ -27,10 +27,10 @@ LinkingTo: Rcpp, RcppArmadillo
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2021-02-09 15:06:50 UTC; fnavarro
+Packaged: 2021-02-16 16:18:51 UTC; fnavarro
 Author: Fabien Navarro [aut, cre],
   Basile De Loynes [aut],
   Baptiste Olivier [aut]
 Maintainer: Fabien Navarro <fabien.navarro@math.cnrs.fr>
 Repository: CRAN
-Date/Publication: 2021-02-09 17:10:02 UTC
+Date/Publication: 2021-02-16 17:20:03 UTC
