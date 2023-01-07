@@ -1,7 +1,17 @@
 gasper News
 
-gasper 1.1.1 release (02/16/2021)
-=================================
+# gasper 1.1.2.9000
+
+-   fix error in `HPFVN`.
+
+# gasper 1.1.2 relase (01/06/2023)
+
+-   satisfy CRAN policy: ‘Packages which use Internet resources should
+    fail gracefully with an informative message if the resource is not
+    available or has changed (and not give a check warning nor error).’
+-   CRAN resubmission.
+
+# gasper 1.1.1 release (02/16/2021)
 
 -   correction of an error in `laplacian_mat` function (in the case of
     full matrix input).
@@ -10,12 +20,11 @@ gasper 1.1.1 release (02/16/2021)
 -   error correction in `SNR` fun (wrong output for matrices)
 -   add Peak Signal to Noise Ratio (`PNSR`) function.
 
-gasper 1.1.0 release (02/09/2021)
-=================================
+# gasper 1.1.0 release (02/09/2021)
 
 -   fix bug in `download_graph` function for downloading graph matrix
     without coordinates.
--   add citation info issue\#1.
+-   add citation info issue#1.
 -   bibliography of SURE paper updated in the vignettes.
 -   add boolean argument allowing to export the coefficients of the
     frame after thresholding (TRUE by default) in `SURE*thresh`
@@ -44,10 +53,9 @@ gasper 1.1.0 release (02/09/2021)
     redundancy).
 -   add new `plot_filter` function (plot wavelet tight-frame functions).
 
-gasper 1.0.1 release (07/27/2020)
-=================================
+# gasper 1.0.1 release (07/27/2020)
 
--   fix warnings bug `SUREthresh` functions
+-   fix warnings bug `SUREthresh` functions.
 -   adapt DESCRIPTION to meet CRAN’s expectations (i.e., omit the
     redundant “in R” from the title, use the Authors@R field and declare
     Maintainer, Authors and Contributors with their appropriate roles
@@ -56,12 +64,11 @@ gasper 1.0.1 release (07/27/2020)
     …” or similar, do not start the description with “This package”,
     package name, title or similar).
 -   optionally specify a RNG seed (for reproducible experiments) in
-    swissroll.R
--   remove `adjacency_mat` N arg
--   Cran resubmission
+    swissroll.R.
+-   remove `adjacency_mat` N arg.
+-   CRAN resubmission.
 
-gasper 1.0.0 release (07/23/2020)
-=================================
+# gasper 1.0.0 release (07/23/2020)
 
--   First release
--   Cran submission
+-   First release.
+-   CRAN submission.

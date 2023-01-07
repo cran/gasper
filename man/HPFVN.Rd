@@ -17,26 +17,28 @@ HPFVN(wcn, evalues, b)
 Graph extension of the Von Neummann variance estimator using finest scale coefficients.
 }
 \examples{
-matrixname <- "grid1"
-groupname <- "AG-Monien"
-graph <- download_graph(matrixname,groupname)
-A <- graph$sA
+data(grid1)
+A <- grid1$sA
 L <- laplacian_mat(A)
-n <- nrow(L)
+x <- grid1$xy[ ,1]
+n <- length(x)
 val1 <- eigensort(L)
 evalues <- val1$evalues
 evectors <- val1$evectors
-lmax <- max(evalues)
-f <- randsignal(eta=0.01,k=5,A=A)
+f <- sin(x)
 sigma <- 0.1
 noise <- rnorm(n, sd = sigma)
 y <- f + noise
 b <- 2
 wcn <- forward_sgwt(y, evalues, evectors, b=b)
+sigma^2
 HPFVN(wcn, evalues, b)
 }
 \references{
 von Neumann, J. (1941). Distribution of the ratio of the mean square successive difference to the variance. \emph{Ann. Math. Statistics}, 35(3), 433--451.
 
 de Loynes, B., Navarro, F., Olivier, B. (2021). Data-driven thresholding in denoising with Spectral Graph Wavelet Transform. Journal of Computational and Applied Mathematics, Vol. 389.
+}
+\seealso{
+\code{\link{GVN}}
 }

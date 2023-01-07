@@ -4,23 +4,20 @@
 \alias{smoothmodulus}
 \title{Modulus of smoothness.}
 \usage{
-smoothmodulus(f, A, L)
+smoothmodulus(f, A)
 }
 \arguments{
 \item{f}{Signal.}
 
 \item{A}{Adjacency matrix (sparse or dense).}
-
-\item{L}{Laplacian matrix (sparse or dense).}
 }
 \description{
 Compute the modulus of smoothness of a graph signal.
 }
 \examples{
-data(minnesota)
-A <- minnesota$A
-L <- laplacian_mat(A)
-x <- minnesota$xy[ ,1]
+data(grid1)
+A <- grid1$A
+x <- grid1$xy[ ,1]
 f <- sin(x)
-smoothmodulus(f, A, L)
+smoothmodulus(f, A)
 }

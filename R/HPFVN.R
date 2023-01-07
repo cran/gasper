@@ -7,23 +7,23 @@
 #' @param b Parameter that control the number of scales.
 #' @param evalues Laplacian spectrum.
 #' @examples
-#' matrixname <- "grid1"
-#' groupname <- "AG-Monien"
-#' graph <- download_graph(matrixname,groupname)
-#' A <- graph$sA
+#' data(grid1)
+#' A <- grid1$sA
 #' L <- laplacian_mat(A)
-#' n <- nrow(L)
+#' x <- grid1$xy[ ,1]
+#' n <- length(x)
 #' val1 <- eigensort(L)
 #' evalues <- val1$evalues
 #' evectors <- val1$evectors
-#' lmax <- max(evalues)
-#' f <- randsignal(eta=0.01,k=5,A=A)
+#' f <- sin(x)
 #' sigma <- 0.1
 #' noise <- rnorm(n, sd = sigma)
 #' y <- f + noise
 #' b <- 2
 #' wcn <- forward_sgwt(y, evalues, evectors, b=b)
+#' sigma^2
 #' HPFVN(wcn, evalues, b)
+#' @seealso \code{\link{GVN}}
 #' @references
 #' von Neumann, J. (1941). Distribution of the ratio of the mean square successive difference to the variance. \emph{Ann. Math. Statistics}, 35(3), 433--451.
 #'
@@ -31,7 +31,7 @@
 
 HPFVN <- function(wcn, evalues, b){
   n <- length(evalues)
-  kmax <- length(wcn)/n
+  kmax <- length(wcn)/n-1
   #- Estimated variance at each scale
   # scay <- rep(0, kmax+1)
   # for(j in 1:(kmax+1)) {
@@ -39,7 +39,7 @@ HPFVN <- function(wcn, evalues, b){
   #                     sum(zetav(evalues, j-1, b)))
   # }
   # return(scay)
-  sig <- sqrt(sum(wcn[(n*kmax):(n*(kmax+1))]^2)/
-                 sum(zetav(evalues, kmax, b)))
+  sig <- sum(wcn[(n*kmax+1):(n*(kmax+1))]^2)/
+                 sum(zetav(evalues, kmax, b))
   return(sig)
 }
