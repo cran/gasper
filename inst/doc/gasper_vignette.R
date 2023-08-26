@@ -4,6 +4,7 @@ if (as.numeric(R.version$minor)>6){
   RNGkind(sample.kind = "Rounding")
 }
 set.seed(434343)
+data(grid1)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -12,11 +13,11 @@ knitr::opts_chunk$set(
   fig.align="center"
 )
 
-## -----------------------------------------------------------------------------
-matrixname <- "grid1"
-groupname <- "AG-Monien"
-download_graph(matrixname, groupname)
-attributes(grid1)
+## ---- eval = FALSE------------------------------------------------------------
+#  matrixname <- "grid1"
+#  groupname <- "AG-Monien"
+#  download_graph(matrixname, groupname)
+#  attributes(grid1)
 
 ## -----------------------------------------------------------------------------
 str(grid1$sA)
@@ -27,8 +28,8 @@ head(grid1$xy, 3)
 ## -----------------------------------------------------------------------------
 grid1$dim
 
-## -----------------------------------------------------------------------------
-cat(readLines(grid1$info, n=14), sep = "\n")
+## ---- eval = FALSE------------------------------------------------------------
+#  cat(readLines(grid1$info, n=14), sep = "\n")
 
 ## ---- fig.show='hold'---------------------------------------------------------
 f <- rnorm(nrow(grid1$sA))
