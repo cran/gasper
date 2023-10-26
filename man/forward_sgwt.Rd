@@ -2,31 +2,79 @@
 % Please edit documentation in R/forward_sgwt.R
 \name{forward_sgwt}
 \alias{forward_sgwt}
-\title{Compute Forward Spectral Graph Wavelet Transform.}
+\title{Compute Forward Spectral Graph Wavelet Transform}
 \usage{
-forward_sgwt(f, evalues, evectors, b = 2)
+forward_sgwt(
+  f,
+  evalues,
+  evectors,
+  b = 2,
+  filter_func = zetav,
+  filter_params = list()
+)
 }
 \arguments{
-\item{f}{Graph signal to analyze.}
+\item{f}{Numeric vector representing the graph signal to analyze.}
 
-\item{evalues}{Eigenvalues of the Laplacian matrix.}
+\item{evalues}{Numeric vector of eigenvalues of the Laplacian matrix.}
 
-\item{evectors}{Eigenvectors of the Laplacian matrix.}
+\item{evectors}{Matrix of eigenvectors of the Laplacian matrix.}
 
-\item{b}{Parameter that control the number of scales.}
+\item{b}{Numeric scalar that control the number of scales in the SGWT. It must be greater than 1.}
+
+\item{filter_func}{Function used to compute the filter values. By default, it uses the \code{\link{zetav}} function but other frame filters can be pass.}
+
+\item{filter_params}{List of additional parameters required by \code{filter_func}. Default is an empty list.}
 }
 \value{
-\code{wc} wavelet coefficients.
+\code{wc} A concatenated vector of wavelet coefficients.
 }
 \description{
-Compute forward SGWT for signal f (without frame calculation). The calculation corresponds to the frame defined by the `tight_frame` function (without explicit calculation of the latter).
+\code{forward_sgwt} computes the forward Spectral Graph Wavelet Transform (SGWT) for a given graph signal \eqn{f}{f}.
+}
+\details{
+The transform is constructed based on the frame defined by the \code{\link{tight_frame}} function, without the need for its explicit calculation. Other filters can be passed as parameters. The SGWT provides a multi-scale analysis of graph signals.
+
+Given a graph signal \eqn{f}{f} of length \eqn{N}{N}, \code{forward_sgwt} computes the wavelet coefficients using SGWT.
+
+The eigenvalues and eigenvectors of the graph Laplacian, are denoted as \eqn{\Lambda}{Lambda} and \eqn{U}{U} respectively. The parameter \eqn{b}{b} controls the number of scales, and \eqn{\lambda_{\text{max}}}{lambda_max} is the largest eigenvalue.
+
+For each scale \eqn{j = 0, 1, \ldots, J}{j = 0, 1, ..., J}, where
+\deqn{J = \left\lfloor \frac{\log(\lambda_{\text{max}})}{\log(b)} \right\rfloor + 2}{J = floor(log(lambda_max)/log(b)) + 2} the wavelet coefficients are computed as:
+\deqn{
+\mathbf{w}_j = U \left( g_j \odot (U^T f) \right)
+}{\mathbf{w}_j = U (g_j * (U^T f))}
+where \deqn{g_j(\lambda) = \sqrt{\psi_j(\lambda)}}{g_j(lambda) = sqrt(psi_j(lambda))} and \eqn{\odot}{*} denotes element-wise multiplication.
+
+The final result is a concatenated vector of these coefficients for all scales.
+}
+\note{
+\code{forward_sgwt} can be adapted for other filters by passing a different filter function to the \code{filter_func} parameter.
+
+The computation of \eqn{k_{\text{max}}}{k_max} using \eqn{\lambda_{\text{max}}}{lambda_max} and \eqn{b}{b} applies primarily to the default \code{zetav} filter. It can be overridden by providing it in the \code{filter_params} list for other filters.
+}
+\examples{
+\dontrun{
+# Extract the adjacency matrix from the grid1 and compute the Laplacian
+L <- laplacian_mat(grid1$sA)
+
+# Compute the spectral decomposition of L
+decomp <- eigensort(L)
+
+# Create a sample graph signal
+f <- rnorm(nrow(L))
+
+# Compute the forward Spectral Graph Wavelet Transform
+wc <- forward_sgwt(f, decomp$evalues, decomp$evectors)
+}
+
 }
 \references{
 Göbel, F., Blanchard, G., von Luxburg, U. (2018). Construction of tight frames on graphs and application to denoising. In Handbook of Big Data Analytics (pp. 503-522). Springer, Cham.
 
-de Loynes, B., Navarro, F., Olivier, B. (2021). Data-driven thresholding in denoising with Spectral Graph Wavelet Transform. Journal of Computational and Applied Mathematics, Vol. 389.
-
 Hammond, D. K., Vandergheynst, P., & Gribonval, R. (2011). Wavelets on graphs via spectral graph theory. Applied and Computational Harmonic Analysis, 30(2), 129-150.
+
+de Loynes, B., Navarro, F., Olivier, B. (2021). Data-driven thresholding in denoising with Spectral Graph Wavelet Transform. Journal of Computational and Applied Mathematics, Vol. 389.
 }
 \seealso{
 \code{\link{inverse_sgwt}}, \code{\link{tight_frame}}

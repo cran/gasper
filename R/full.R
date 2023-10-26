@@ -1,15 +1,15 @@
-#' Convert symmetric sparse matrix to full matrix.
+#' Conversion of Symmetric Sparse Matrix to Full Matrix
 #'
-#' Convert a symmetric sparse matrix sA to full matrix A.
+#' \code{full} converts a symmetric sparse matrix, represented as \code{sA}, into a full matrix \code{A}.
 #'
 #' @export full
 #' @importFrom methods is
-#' @param sA Sparse matrix to convert.
+#' @param sA Symmetric sparse matrix, either in a sparse matrix format or in a three-column format, that needs to be converted into a full matrix.
+#' @return \code{A} Full matrix constructed from the symmetric sparse matrix \code{sA}.
 #' @seealso \code{\link{fullup}}
 #' @examples
 #' sA <- pittsburgh$sA
 #' A <- full(sA)
-#' @seealso \code{\link{fullup}}
 
 full <- function(sA) {
   if(is(sA, 'sparseMatrix')){

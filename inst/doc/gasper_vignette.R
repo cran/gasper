@@ -13,11 +13,11 @@ knitr::opts_chunk$set(
   fig.align="center"
 )
 
-## ---- eval = FALSE------------------------------------------------------------
-#  matrixname <- "grid1"
-#  groupname <- "AG-Monien"
-#  download_graph(matrixname, groupname)
-#  attributes(grid1)
+## ---- eval = T----------------------------------------------------------------
+matrixname <- "grid1"
+groupname <- "AG-Monien"
+download_graph(matrixname, groupname)
+attributes(grid1)
 
 ## -----------------------------------------------------------------------------
 str(grid1$sA)
@@ -28,8 +28,20 @@ head(grid1$xy, 3)
 ## -----------------------------------------------------------------------------
 grid1$dim
 
+## -----------------------------------------------------------------------------
+list.files(grid1$temp)
+
 ## ---- eval = FALSE------------------------------------------------------------
-#  cat(readLines(grid1$info, n=14), sep = "\n")
+#  cat(readLines(paste(grid1$temp,"grid1",sep=""), n=14), sep = "\n")
+
+## ---- eval=FALSE--------------------------------------------------------------
+#  matrix_info <- get_graph_info(matrixname, groupname)
+#  matrix_info
+
+## ---- echo=FALSE, eval=FALSE--------------------------------------------------
+#  graph_info <- get_graph_info(matrixname, groupname)
+#  knitr::kables(list(knitr::kable(graph_info[[2]], valign = 't'),
+#                     knitr::kable(graph_info[[3]], valign = 't')))
 
 ## ---- fig.show='hold'---------------------------------------------------------
 f <- rnorm(nrow(grid1$sA))
@@ -76,7 +88,7 @@ opt_thresh_d <- SURE_MSEthresh(wcn,
                            wcf, 
                            thresh, 
                            diagWWt, 
-                           b=2, 
+                           beta=2, 
                            sigma, 
                            NA,
                            policy = "dependent",
@@ -86,7 +98,7 @@ opt_thresh_u <- SURE_MSEthresh(wcn,
                            wcf, 
                            thresh, 
                            diagWWt, 
-                           b=2, 
+                           beta=2, 
                            sigma, 
                            NA,
                            policy = "uniform",
@@ -104,10 +116,10 @@ legend("topleft", legend=c("MSE_u", "SURE_u",
        lty=c(1,1,2,2), cex = 1)
 
 ## -----------------------------------------------------------------------------
-wc_oracle_u <- opt_thresh_u$wc[, opt_thresh_u$min[1]]
-wc_oracle_d <- opt_thresh_d$wc[, opt_thresh_d$min[1]]
-wc_SURE_u <- opt_thresh_u$wc[, opt_thresh_u$min[2]]
-wc_SURE_d <- opt_thresh_d$wc[, opt_thresh_d$min[2]]
+wc_oracle_u <- opt_thresh_u$wc[, opt_thresh_u$min["xminMSE"]]
+wc_oracle_d <- opt_thresh_d$wc[, opt_thresh_d$min["xminMSE"]]
+wc_SURE_u <- opt_thresh_u$wc[, opt_thresh_u$min["xminSURE"]]
+wc_SURE_d <- opt_thresh_d$wc[, opt_thresh_d$min["xminSURE"]]
 
 hatf_oracle_u <- synthesis(wc_oracle_u, tf)
 hatf_oracle_d <- synthesis(wc_oracle_d, tf)
@@ -130,4 +142,17 @@ knitr::kable(res, caption="Uniform vs Dependent" )
 ## ---- eval=FALSE--------------------------------------------------------------
 #  wc_oracle_u <- betathresh(wcn,
 #                            thresh[opt_thresh_u$min[[1]]], 2)
+
+## -----------------------------------------------------------------------------
+J <- floor(log(lmax)/log(b)) + 2
+LD_opt_thresh_d <- LD_SUREthresh(J=J, 
+                             wcn=wcn, 
+                             diagWWt=diagWWt, 
+                             beta=2, 
+                             sigma=sigma,
+                             hatsigma=NA,
+                             policy = "uniform",
+                             keepSURE = FALSE)
+hatf_LD_SURE_d <- synthesis(LD_opt_thresh_d$wcLDSURE, tf)
+print(paste0("LD_SURE_u = ",round(SNR(f,hatf_LD_SURE_d),2),"dB"))
 

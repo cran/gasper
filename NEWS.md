@@ -1,5 +1,30 @@
 gasper News
 
+# gasper 1.1.5
+
+-   change `b` by `beta` in `betathresh` and `SUREThresh` to avoid
+    confusion with the parameter that control the number of scales in
+    other functions.
+-   add Level dependent SURE thresholding `LD_SUREthresh`.
+-   add graph Fourier transform functions `forward_gft`/`inverse_gft`.
+-   add `spectral_coords` function to compute spectral coordinates of a
+    graph using the two smallest non-zero eigenvalues of the graph
+    Laplacian.
+-   add random walk and normalized Laplacian matrix to `laplacian_mat`
+    (keep unnormalized as default).
+-   add more info in doc.
+-   add `localize_gft`/`localize_sgwt` fun.
+-   add custom frame filters support (in `forward/inverse_sgwt`,
+    `HPFVN`, `plot_filter` and `tight_frame`) by passing additional
+    arguments (`filter_params`/`filter_func`).
+-   add `get_graph_info` to retrieve from SuiteSparse the two/three
+    tables with “Matrix Information,” “Matrix Properties” and, if
+    available, “SVD Statistics”.
+-   change `info` output in `dowload_graph` to `temp` to access temp dir
+    instead.
+-   add optional logical argument `svd` to fetch singular values is
+    needed and provided.
+
 # gasper 1.1.4 relase (08/26/2023)
 
 -   satisfy CRAN policy (by removing external download).

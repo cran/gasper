@@ -1,7 +1,6 @@
-#' Download sparse matrix form the SuiteSparse Matrix Collection.
+#' Download Sparse Matrix form the SuiteSparse Matrix Collection
 #'
-#' If coordinates are associated with the graphs,
-#' they are automatically downloaded and added to the output. See \url{https://sparse.tamu.edu/} for the list of groups and graph names.
+#' \code{download_graph} allows to download sparse matrices from the SuiteSparse Matrix Collection.
 #'
 #' @export download_graph
 #' @importFrom httr GET timeout http_error message_for_status
@@ -10,29 +9,53 @@
 #' @importFrom Matrix readMM
 #' @param matrixname Name of the graph to download.
 #' @param groupname Name of the group that provides the graph.
-#' @return \code{matrixname} a list contening the sparse matrix \code{sA}, \code{xy} coordinates (if any), \code{dim} the number of rows, columns and numerically nonzero elements  and \code{info}, the path to a plain txt file containing information associated with \code{sA} (accessible for example via \code{file.show(matrixname$info)}).
+#' @param svd Logical, if \code{TRUE}, a ".mat" file containing the singular values of the matrix is downloaded (if available). Default is \code{FALSE}.
+#' @return A list containing several components:
+#'         \itemize{
+#'           \item \code{sA}: A sparse matrix representation of the downloaded graph.
+#'           \item \code{xy}: Coordinates associated with the graph nodes (if available).
+#'           \item \code{dim}: A data frame with the number of rows, columns, and numerically nonzero elements.
+#'           \item \code{temp}: The path to the temporary directory where the matrix and downloaded files (including singular values if requested) are stored.
+#' }
+#'
+#' @details
+#' \code{download_graph} automatically converts the downloaded matrix into a sparse matrix format. If coordinates are associated with the graphs, they are downloaded and included in the output. Visit \url{https://sparse.tamu.edu/} to explore groups and matrix names.
+#'
+#' @note This temporary directory can be accessed, for example, via \code{list.files(grid1$info)}. To open the read .mat files (containing singular values),  "R.matlab" or "foreign" packages can be used. After using the downloaded data, you can delete the content of the temporary folder.
+#'
 #' @references
 #' Davis, T. A., & Hu, Y. (2011). The University of Florida sparse matrix collection. ACM Transactions on Mathematical Software (TOMS), 38(1), 1-25.
+#'
+#' Kolodziej, S. P., Aznaveh, M., Bullock, M., David, J., Davis, T. A., Henderson, M., Hu, Y., & Sandstrom, R. (2019). The suitesparse matrix collection website interface. Journal of Open Source Software, 4(35), 1244.
+#'
 #' @examples
 #' \dontrun{
 #' matrixname <- "grid1"
 #' groupname <- "AG-Monien"
 #' download_graph(matrixname,groupname)
-#' file.show(grid1$info)
+#' list.files(grid1$info)
 #' }
+#' @seealso \code{\link{get_graph_info}}
 
-download_graph <- function(matrixname, groupname) {
+download_graph <- function(matrixname, groupname, svd = FALSE) {
     url <- paste("https://sparse.tamu.edu/MM/",
                  groupname,"/",
                  matrixname,".tar.gz",sep = "")
-
     temp <- tempfile()
     tempd <- tempdir()
     gracefully_fail(url)
+
     download.file(url, temp)
-
     untar(temp, exdir=tempd)
-
+    if (svd) {
+      url_svd <- paste0("https://suitesparse-collection-website.herokuapp.com/svd/",
+                        groupname, "/", matrixname, "_SVD.mat")
+      gracefully_fail(url_svd)
+      svdpath <- file.path(tempd,
+                           matrixname,
+                           paste0(matrixname, "_SVD.mat"))
+      download.file(url_svd, svdpath)
+    }
     if (Sys.info()['sysname']=="Windows"){
       tempp <- paste(tempd,
                      paste(matrixname,"\\",sep=""),
@@ -41,7 +64,6 @@ download_graph <- function(matrixname, groupname) {
       tempp <- file.path(tempd,
                          paste(matrixname,"/",sep=""))
     }
-
     temppath <- paste(tempp,
                       matrixname,".mtx",sep="")
 
@@ -67,11 +89,11 @@ download_graph <- function(matrixname, groupname) {
                            NonZeros)
 
     m <- readMM(temppath)
-    m <- as(m, "CsparseMatrix")
+    m <- as(m, "dMatrix")
     if(nrow(m)==ncol(m)){
-      m <- as(m, "dsCMatrix")
+      m <- as(m, "CsparseMatrix")
     } else{
-      m <- as(m, "dgCMatrix")
+      m <- as(m, "CsparseMatrix")
     }
 
     # if (ncol(df)==2){
@@ -104,7 +126,7 @@ download_graph <- function(matrixname, groupname) {
                     list("sA"=m,
                          "xy"=dfc,
                          "dim"=graphdim,
-                         "info"=graphdesc),
+                         "temp"=tempp),
                     envir = parent.frame()))
     }
     else {
@@ -113,17 +135,16 @@ download_graph <- function(matrixname, groupname) {
       return(assign(matrixname,
                     list("sA"=m,
                          "dim"=graphdim,
-                         "info"=graphdesc),
+                         "temp"=tempp),
                     envir = parent.frame()))
     }
-
 }
 
 gracefully_fail <- function(remote_file) {
   # Fail gracefully if API or internet not available
   # Based on code:
   # https://github.com/lgnbhl/wikisourcer/blob/master/R/utils.R
-  # See full discussion to be compliante with the CRAN policy
+  # See full discussion to be compliant with the CRAN policy
   # https://community.rstudio.com/t/internet-resources-should-fail-gracefully/49199
   try_GET <- function(x, ...) {
     tryCatch(

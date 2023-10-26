@@ -1,13 +1,13 @@
 Package: gasper
 Type: Package
 Title: Graph Signal Processing
-Version: 1.1.4
-Authors@R: c(person("Fabien", "Navarro", role = c("aut", "cre"), 
-                    email = "fabien.navarro@math.cnrs.fr", 
-                    comment = c(ORCID = "0000-0002-4979-2745")), 
-             person("Basile", "de Loynes", role = "aut", 
+Version: 1.1.5
+Authors@R: c(person("Basile", "de Loynes", role = "aut", 
                     email = "basile.deloynes@ensai.fr",
-                    comment = c(ORCID = "0000-0002-5397-6811")), 
+                    comment = c(ORCID = "0000-0002-5397-6811")),
+             person("Fabien", "Navarro", role = c("aut", "cre"), 
+                    email = "fabien.navarro@math.cnrs.fr", 
+                    comment = c(ORCID = "0000-0002-4979-2745")),
              person("Baptiste", "Olivier", role = "aut", 
                     email = "baptiste.olivier@orange.com",
                     comment = c(ORCID = "0000-0002-5853-0341")))
@@ -28,13 +28,13 @@ RoxygenNote: 7.2.3
 Depends: R (>= 3.5.0)
 Imports: Rcpp, ggplot2, methods, Matrix, RSpectra, httr, curl
 LinkingTo: Rcpp, RcppArmadillo
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, rvest
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2023-08-26 14:53:24 UTC; fnavarro
-Author: Fabien Navarro [aut, cre] (<https://orcid.org/0000-0002-4979-2745>),
-  Basile de Loynes [aut] (<https://orcid.org/0000-0002-5397-6811>),
+Packaged: 2023-10-26 21:55:56 UTC; fnavarro
+Author: Basile de Loynes [aut] (<https://orcid.org/0000-0002-5397-6811>),
+  Fabien Navarro [aut, cre] (<https://orcid.org/0000-0002-4979-2745>),
   Baptiste Olivier [aut] (<https://orcid.org/0000-0002-5853-0341>)
 Maintainer: Fabien Navarro <fabien.navarro@math.cnrs.fr>
 Repository: CRAN
-Date/Publication: 2023-08-26 15:40:01 UTC
+Date/Publication: 2023-10-26 22:20:02 UTC

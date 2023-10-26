@@ -1,0 +1,86 @@
+#' Level Dependent Stein's Unbiased Risk Estimate Thresholding
+#'
+#' Adaptive threshold selection using the Level Dependent Stein's Unbiased Risk Estimate.
+#'
+#' @export
+#' @param J Integer. The finest scale, or the highest frequency. This parameter determines the total number of scales that the function will process.
+#' @param wcn A numeric vector of noisy spectral graph wavelet coefficients that need to be thresholded.
+#' @param diagWWt Numeric vector of weights.
+#' @param beta Numeric. The type of thresholding to be used. If beta=1, soft thresholding is applied. If beta=2, James-Stein thresholding is applied (Default is 2).
+#' @param sigma Numeric. The standard deviation of the noise present in the wavelet coefficients.
+#' @param hatsigma Numeric. An optional estimator of the noise standard deviation. If provided, the function will also compute wavelet coefficient estimates using this estimator.
+#' @param policy The policy for threshold setting. It can be either "uniform" (default) or
+#'        "dependent".
+#' @param keepSURE A logical flag. If \code{TRUE}, the function will also return a list containing the results of the SURE thresholding for each scale.
+#' @return A list containing the wavelet coefficient estimates after applying the SURE
+#'         thresholding.
+#'         \itemize{
+#'           \item \code{wcLDSURE}: The wavelet coefficient estimates obtained by minimizing SURE.
+#'           \item \code{wcLDhatSURE}: If \code{hatsigma} is provided, this component contains the
+#'                  wavelet coefficient estimates obtained using the \code{hatsigma} estimator.
+#'           \item \code{lev_thresh}: If \code{keepSURE} is \code{TRUE}, this component contains a list of results similar to the output of \code{SUREthresh} for each scale.
+#' }
+#' @seealso
+#' \code{\link{SUREthresh}} for the underlying thresholding method used at each scale.
+#'
+#' @details
+#' This function applies SURE in a level dependent manner to wavelet coefficients, which aims to minimize SURE at each wavelet scale.
+#'
+#' In the "uniform" policy, the thresholds are set based on the absolute value of the wavelet coefficients. In the "dependent" policy, the thresholds are set based on the wavelet coefficients normalized by the weights from \code{diagWWt}.
+#'
+#' @references
+#' Donoho, D. L., & Johnstone, I. M. (1995). Adapting to unknown smoothness via wavelet shrinkage. Journal of the american statistical association, 90(432), 1200-1224.
+#'
+#' de Loynes, B., Navarro, F., Olivier, B. (2021). Data-driven thresholding in denoising with
+#' Spectral Graph Wavelet Transform. Journal of Computational and Applied Mathematics, Vol. 389.
+#'
+#' Stein, C. M. (1981). Estimation of the mean of a multivariate normal distribution. The annals of Statistics, 1135-1151.
+
+LD_SUREthresh <- function(J, wcn, diagWWt, beta = 2, sigma, hatsigma = NA, policy = "uniform", keepSURE = FALSE){
+  N <- length(wcn)
+  n <- N/(J+1)
+  lev_thresh <- list()
+  wclevSURE <- rep(0, N)
+  wclevhatSURE <- rep(0, N)
+  tresh_set_all <- rep(0, N)
+  for (k in 0:J){
+    indscale <- seq(k*n+1, (k+1)*n)
+    wc <- wcn[indscale]
+    if (policy == "uniform") {
+      thresh_set <- sort(abs(wc))
+    }
+    else if (policy == "dependent") {
+      thresh_set <- sort(abs(wc)/sqrt(diagWWt[indscale]))
+      #hatsigma <- sqrt(sum(wc^2)/
+      #               sum(zetav(evalues, k, b=2)))
+    }
+    else {
+      warning("Allowable policy are listed above")
+      print("uniform")
+      print("dependent")
+    }
+    lev_thresh[[k+1]] <- SUREthresh(wcn = wc,
+                                    thresh = thresh_set,
+                                    diagWWt = diagWWt[indscale],
+                                    beta = beta,
+                                    sigma = sigma,
+                                    hatsigma = hatsigma,
+                                    policy = policy,
+                                    keepwc = TRUE)
+
+    wclevSURE[indscale] <- lev_thresh[[k+1]]$wc[,lev_thresh[[k+1]]$min[1]]
+    wclevhatSURE[indscale] <- lev_thresh[[k+1]]$wc[,lev_thresh[[k+1]]$min[2]]
+  }
+  if(keepSURE){
+    return(list(lev_thresh = lev_thresh,
+                wcLDSURE = wclevSURE,
+                wcLDhatSURE = wclevhatSURE))
+  }
+  else{
+    return(list(wcLDSURE = wclevSURE,
+                wcLDhatSURE = wclevhatSURE))
+  }
+}
+
+
+

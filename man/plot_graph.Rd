@@ -2,22 +2,32 @@
 % Please edit documentation in R/plot_graph.R
 \name{plot_graph}
 \alias{plot_graph}
-\title{Graph plot}
+\title{Plot Graph}
 \usage{
 plot_graph(z, size = 0.75)
 }
 \arguments{
-\item{z}{Graph data.}
+\item{z}{A list containing graph data. This list must have the following components:
+\itemize{
+  \item{sA}  An adjacency matrix or a sparse Matrix representation of the graph.
+  \item{xy}  A matrix or dataframe containing the x and y coordinates of each node in the graph.
+}}
 
-\item{size}{Dot size.}
+\item{size}{Numeric. Dot size for nodes. Default is 0.75.}
 }
 \description{
-Graph plot
+Visualizes a graph using ggplot2. It plots nodes as points and edges as segments connecting these points.
+}
+\details{
+The function is primarily designed to work with the output from the \code{\link{download_graph}} function. This ensures that the graph visualization upholds the structure and properties of the retrieved graph. However, the function can also be utilized to visualize custom graph structures, provided they match to the input format.
+}
+\note{
+If node coordinates \code{xy} are not provided, they will be calculated using spectral methods \code{\link{spectral_coords}}. For large graphs, this can be computationally intensive and may take significant time. Use with caution for large graphs if node coordinates are not supplied.
 }
 \examples{
 data(grid1)
 plot_graph(grid1)
 }
 \seealso{
-\code{\link{plot_signal}}
+\code{\link{download_graph}}, \code{\link{plot_signal}}, \code{\link{spectral_coords}}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/adjacency_mat.R
 \name{adjacency_mat}
 \alias{adjacency_mat}
-\title{Compute the adjacency matrix of the gaussian weighted graph}
+\title{Compute the Adjacency Matrix of a Gaussian Weighted Graph}
 \usage{
 adjacency_mat(
   pts,
@@ -13,19 +13,26 @@ adjacency_mat(
 )
 }
 \arguments{
-\item{pts}{coordinates of N points in \eqn{R^3}{R^3}.}
+\item{pts}{Matrix representing the coordinates of N points in \eqn{\mathbb{R}^3}{R^3}. Each row should correspond to a point.}
 
-\item{f}{is a scalar potential (\eqn{\exp(-x^2/2t^2)}{exp(-x^2/2*t^2)} for gaussian potential)}
+\item{f}{A scalar potential function. By default, the Gaussian potential \eqn{\exp(-x^2/8)}{exp(-x^2/8)} is used.}
 
-\item{s}{is a threhold to sparisfy the matrix}
+\item{s}{Numeric threshold used to sparsify the adjacency matrix. Any value below this threshold will be set to zero. Default is 0.}
+}
+\value{
+A matrix representing the adjacency matrix of the Gaussian weighted graph.
 }
 \description{
-Compute the adjacency matrix of the gaussian weighted graph
+\code{adjacency_mat} calculates the adjacency matrix of a Gaussian weighted graph based on the distance between points in \eqn{\mathbb{R}^3}{R^3}.
+}
+\details{
+The function computes pairwise distances between each point in \code{pts} and weights the adjacency matrix based on the scalar potential \code{f}. The final adjacency matrix can be sparsified by setting values below the threshold \code{s} to zero.
 }
 \examples{
 pts <- swissroll(N=100, seed=0, a=1, b=4)
 W <- adjacency_mat(pts)
 }
 \seealso{
-\code{\link{laplacian_mat}}, \code{\link{swissroll}}
+\code{\link{laplacian_mat}} for calculating the Laplacian matrix,
+\code{\link{swissroll}} for generating a Swiss roll dataset.
 }
