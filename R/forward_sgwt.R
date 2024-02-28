@@ -6,7 +6,7 @@
 #' @param f Numeric vector representing the graph signal to analyze.
 #' @param evalues Numeric vector of eigenvalues of the Laplacian matrix.
 #' @param evectors Matrix of eigenvectors of the Laplacian matrix.
-#' @param b Numeric scalar that control the number of scales in the SGWT. It must be greater than 1.
+#' @param b Numeric scalar that controls the number of scales in the SGWT. It must be greater than 1.
 #' @param filter_func Function used to compute the filter values. By default, it uses the \code{\link{zetav}} function but other frame filters can be pass.
 #' @param filter_params List of additional parameters required by \code{filter_func}. Default is an empty list.
 #' @return \code{wc} A concatenated vector of wavelet coefficients.
@@ -20,7 +20,7 @@
 #'
 #' The eigenvalues and eigenvectors of the graph Laplacian, are denoted as \eqn{\Lambda}{Lambda} and \eqn{U}{U} respectively. The parameter \eqn{b}{b} controls the number of scales, and \eqn{\lambda_{\text{max}}}{lambda_max} is the largest eigenvalue.
 #'
-#' For each scale \eqn{j = 0, 1, \ldots, J}{j = 0, 1, ..., J}, where
+#' For each scale \eqn{j = 0, \ldots, J}{j = 0, ..., J}, where
 #' \deqn{J = \left\lfloor \frac{\log(\lambda_{\text{max}})}{\log(b)} \right\rfloor + 2}{J = floor(log(lambda_max)/log(b)) + 2} the wavelet coefficients are computed as:
 #' \deqn{
 #' \mathbf{w}_j = U \left( g_j \odot (U^T f) \right)

@@ -6,8 +6,7 @@
 #' @param wcn Numeric vector of the noisy spectral graph wavelet coefficients.
 #' @param thresh Numeric vector of threshold values.
 #' @param diagWWt Numeric vector of weights typically derived from the diagonal elements of the wavelet frame matrix.
-#'                elements of the wavelet frame operator matrix.
-#' @param beta A numeric value specifying the type of thresholding to be used:
+#' @param beta A numeric value specifying the type of thresholding to be used, for example:
 #'  \itemize{
 #'             \item 1 for soft thresholding.
 #'             \item 2 for James-Stein thresholding.
@@ -16,9 +15,9 @@
 #' @param hatsigma An optional numeric value providing an estimate of the noise standard deviation (default is \code{NA}).
 #' @param policy A character string determining the thresholding policy. Valid options include:
 #' \itemize{
-#'               \item \code{"uniform"} for a global threshold applied uniformly across all coefficients.
-#'               \item \code{"dependent"} for threshold values that adaptively depend on the corresponding \code{diagWWt} weights.
-#'               }
+#'          \item \code{"uniform"} for a global threshold applied uniformly across all coefficients.
+#'          \item \code{"dependent"} for threshold values that adaptively depend on the corresponding \code{diagWWt} weights.
+#'          }
 #' @param keepwc A logical value determining if the thresholded wavelet coefficients should be returned (Default is \code{TRUE}).
 #' @return A list containing:
 #' \itemize{
@@ -49,11 +48,16 @@
 #' \code{\link{GVN}} and \code{\link{HPFVN}} provide naive noise variance estimation.
 #'
 #' @note
-#' The vector of thresholds \code{thresh} for evaluating the SURE can be effectively determined by ordering the absolute values of the noisy wavelet coefficients. This approach aligns with Donoho and Johnstone's trick in standard wavelet thresholding, where SURE typically reaches its minimum at one of these coefficients. For further details, please refer to the references provided.
+#' The vector of thresholds \code{thresh} for evaluating the SURE can be effectively determined by ordering the absolute values of the noisy wavelet coefficients. This approach aligns with Donoho and Johnstone's trick in standard wavelet thresholding, where SURE typically reaches its minimum at one of these coefficients. For further details, see Donoho and Johnstone Section 2.3 and de Loynes et al. Section 3.3.
 #'
 #' The function intentionally omits the irreducible variance term from the SURE calculations, as it doesn't affect the minimum's location.
 #'
 #' Also, when `keepwc = TRUE`, the function provides thresholded wavelet coefficients for all evaluated threshold values, offering deeper insights into the effects of different thresholds.
+#'
+#' @examples
+#' #
+#' # See example in SURE_MSEthresh
+#' #
 #'
 #' @references
 #' Donoho, D. L., & Johnstone, I. M. (1995). Adapting to unknown smoothness via wavelet shrinkage. Journal of the american statistical association, 90(432), 1200-1224.
@@ -135,21 +139,3 @@ SUREthresh <- function(wcn, thresh, diagWWt, beta = 2, sigma, hatsigma = NA, pol
   }
   return(res)
 }
-
-
-
-
-#
-# The expression for SURE is:
-# \deqn{
-# \mathbf{SURE}(h)=-n \sigma^2 + \sum_{i=1}^{n(J+1)} \widetilde F_i^2 \left ( 1 \wedge \frac{t_i^\beta}{|\widetilde F_i|^\beta} \right )^2
-# + 2 \sum_{i=1}^{n(J+1)} \mathbf{V}(\Xi_i) \mathbf 1_{[t_i,\infty)}(|\widetilde F_i|) \left [ 1+\frac{(\beta-1) t_i^\beta}{|\widetilde F_i|^\beta} \right ].
-# }
-#
-# \deqn{
-# \mathbf{SURE}(h)=-n \sigma^2 + \sum_{i=1}^{n(J+1)} \widetilde F_i^2 \left ( 1 \wedge \frac{t_i^\beta}{|\widetilde F_i|^\beta} \right )^2
-# + 2 \sum_{i=1}^{n(J+1)} \gamma_{ij} \partial_j h_i(\widetilde{\mathbf{F}}).
-# }
-# \deqn{
-# \mathbf{SURE}(h) = -n\sigma^2 + \|\widetilde{\mathbf{F}} - h(\widetilde{\mathbf{F}})\|_2^2 + 2\sigma^2 \sum_{i,j = 1}^{n(J+1)} \gamma_{ij} \partial_j h_i(\widetilde{\mathbf{F}})
-# }

@@ -20,7 +20,7 @@ inverse_gft(L, hatf, U = NULL)
 \code{inverse_gft} computes the Inverse Graph Fourier Transform (IGFT) of a given transformed graph signal \eqn{\hat{f}}{\hat{f}}.
 }
 \details{
-The IGFT retrieves the original graph signal from its projection in the eigenspace of the graph's Laplacian matrix. It enables the reconstruction of graph signals from their frequency domain representation. The "frequency" in the context of graph signal processing refers to the decomposition of the signal using the graph's Laplacian eigenvectors.
+The IGFT enables the reconstruction of graph signals from their frequency domain representation. The "frequency" in the context of graph signal processing refers to the decomposition of the signal using the graph's Laplacian eigenvectors.
 
 The IGFT of a transformed graph signal \eqn{\hat{f}}{\hat{f}} is given by:
 \deqn{
@@ -29,6 +29,22 @@ f = U \hat{f}
 where \eqn{U}{U} represents the matrix of eigenvectors of the graph's Laplacian.
 
 When the eigenvectors \eqn{U}{U} are not provided, the function computes them from the Laplacian matrix \eqn{L}{L}.
+}
+\examples{
+\dontrun{
+# Extract the adjacency matrix from the grid1 and compute the Laplacian
+L <- laplacian_mat(grid1$sA)
+
+# Create a sample graph signal
+f <- rnorm(nrow(L))
+
+# Compute the forward GFT
+hatf <- forward_gft(L, f)
+
+# Compute the forward GFT
+recf <- inverse_gft(L, hatf)
+}
+
 }
 \references{
 Ortega, A., Frossard, P., Kovačević, J., Moura, J. M., & Vandergheynst, P. (2018). Graph signal processing: Overview, challenges, and applications. Proceedings of the IEEE, 106(5), 808-828.

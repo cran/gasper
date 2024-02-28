@@ -7,6 +7,19 @@
 #' @param adj_mat A symmetric adjacency matrix or sparse matrix representing an undirected graph.
 #' @return A matrix where each row represents the spectral coordinates of a node in the graph.
 #' @seealso \code{\link{plot_graph}}, \code{\link{plot_signal}}
+#'
+#' @details
+#' The \code{spectral_coords} function implements a 2-dimensional spectral graph drawing method based on the eigenvectors of the graph Laplacian associated with its two smallest non-zero eigenvalues. Given a graph with adjacency matrix \code{adj_mat}, the graph Laplacian \code{L} is computed, which is a matrix representation that encodes the graph's topology. The Laplacian's eigenvalues and eigenvectors are calculated, and the eigenvectors corresponding to the second and third non-zero smallest eigenvalues are used to determine the coordinates of the graph's vertices in the plane.
+#'
+#' @examples
+#' \dontrun{
+#' matrixname <- "bcspwr02"
+#' groupname <- "HB"
+#' download_graph(matrixname,groupname)
+#' xy <- spectral_coords(bcspwr02$sA)
+#' bcspwr02$xy <- xy
+#' plot_graph(bcspwr02)
+#' }
 #' @references
 #' Chung, F. R. K. (1997). Spectral Graph Theory. American Mathematical Soc.
 #'
@@ -20,7 +33,6 @@
 
 spectral_coords <- function(adj_mat) {
   L <- laplacian_mat(adj_mat)
-
   if (max(dim(adj_mat)) > 3000) {
     # Use Rspectra::eigs_sym for larger matrices
     adj_mat <- as(adj_mat, "dgCMatrix")

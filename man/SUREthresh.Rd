@@ -20,10 +20,9 @@ SUREthresh(
 
 \item{thresh}{Numeric vector of threshold values.}
 
-\item{diagWWt}{Numeric vector of weights typically derived from the diagonal elements of the wavelet frame matrix.
-elements of the wavelet frame operator matrix.}
+\item{diagWWt}{Numeric vector of weights typically derived from the diagonal elements of the wavelet frame matrix.}
 
-\item{beta}{A numeric value specifying the type of thresholding to be used:
+\item{beta}{A numeric value specifying the type of thresholding to be used, for example:
 \itemize{
            \item 1 for soft thresholding.
            \item 2 for James-Stein thresholding.
@@ -35,9 +34,9 @@ elements of the wavelet frame operator matrix.}
 
 \item{policy}{A character string determining the thresholding policy. Valid options include:
 \itemize{
-              \item \code{"uniform"} for a global threshold applied uniformly across all coefficients.
-              \item \code{"dependent"} for threshold values that adaptively depend on the corresponding \code{diagWWt} weights.
-              }}
+         \item \code{"uniform"} for a global threshold applied uniformly across all coefficients.
+         \item \code{"dependent"} for threshold values that adaptively depend on the corresponding \code{diagWWt} weights.
+         }}
 
 \item{keepwc}{A logical value determining if the thresholded wavelet coefficients should be returned (Default is \code{TRUE}).}
 }
@@ -73,11 +72,17 @@ The thresholding operator, represented by \eqn{h} in the \code{\link{SUREthresh}
 \code{\link{GVN}} and \code{\link{HPFVN}} provide naive noise variance estimation.
 }
 \note{
-The vector of thresholds \code{thresh} for evaluating the SURE can be effectively determined by ordering the absolute values of the noisy wavelet coefficients. This approach aligns with Donoho and Johnstone's trick in standard wavelet thresholding, where SURE typically reaches its minimum at one of these coefficients. For further details, please refer to the references provided.
+The vector of thresholds \code{thresh} for evaluating the SURE can be effectively determined by ordering the absolute values of the noisy wavelet coefficients. This approach aligns with Donoho and Johnstone's trick in standard wavelet thresholding, where SURE typically reaches its minimum at one of these coefficients. For further details, see Donoho and Johnstone Section 2.3 and de Loynes et al. Section 3.3.
 
 The function intentionally omits the irreducible variance term from the SURE calculations, as it doesn't affect the minimum's location.
 
 Also, when `keepwc = TRUE`, the function provides thresholded wavelet coefficients for all evaluated threshold values, offering deeper insights into the effects of different thresholds.
+}
+\examples{
+#
+# See example in SURE_MSEthresh
+#
+
 }
 \references{
 Donoho, D. L., & Johnstone, I. M. (1995). Adapting to unknown smoothness via wavelet shrinkage. Journal of the american statistical association, 90(432), 1200-1224.

@@ -20,7 +20,7 @@ forward_sgwt(
 
 \item{evectors}{Matrix of eigenvectors of the Laplacian matrix.}
 
-\item{b}{Numeric scalar that control the number of scales in the SGWT. It must be greater than 1.}
+\item{b}{Numeric scalar that controls the number of scales in the SGWT. It must be greater than 1.}
 
 \item{filter_func}{Function used to compute the filter values. By default, it uses the \code{\link{zetav}} function but other frame filters can be pass.}
 
@@ -39,7 +39,7 @@ Given a graph signal \eqn{f}{f} of length \eqn{N}{N}, \code{forward_sgwt} comput
 
 The eigenvalues and eigenvectors of the graph Laplacian, are denoted as \eqn{\Lambda}{Lambda} and \eqn{U}{U} respectively. The parameter \eqn{b}{b} controls the number of scales, and \eqn{\lambda_{\text{max}}}{lambda_max} is the largest eigenvalue.
 
-For each scale \eqn{j = 0, 1, \ldots, J}{j = 0, 1, ..., J}, where
+For each scale \eqn{j = 0, \ldots, J}{j = 0, ..., J}, where
 \deqn{J = \left\lfloor \frac{\log(\lambda_{\text{max}})}{\log(b)} \right\rfloor + 2}{J = floor(log(lambda_max)/log(b)) + 2} the wavelet coefficients are computed as:
 \deqn{
 \mathbf{w}_j = U \left( g_j \odot (U^T f) \right)
